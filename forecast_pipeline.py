@@ -96,7 +96,10 @@ print("📅 Future 30-day forecast ...")
 fc30       = pm.predict(pm.make_future_dataframe(periods=30, freq="D")).tail(30)
 future_out = fc30[["ds", "yhat", "yhat_lower", "yhat_upper"]].copy()
 future_out.columns = ["Date", "Prophet Forecast", "Lower Bound", "Upper Bound"]
-future_out = future_out.clip(lower=0).round(2)
+
+# ── FIX: clip only numeric columns, not the Date column ───
+numeric_cols = ["Prophet Forecast", "Lower Bound", "Upper Bound"]
+future_out[numeric_cols] = future_out[numeric_cols].clip(lower=0).round(2)
 
 # ── 7. Model Metrics ──────────────────────────────────────
 y = test["Quantity Sold"]
